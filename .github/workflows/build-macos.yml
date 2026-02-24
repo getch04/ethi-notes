@@ -1,0 +1,44 @@
+# Build EthioNote for macOS. Run manually: Actions → "Build macOS" → Run workflow.
+# Download the "EthioNote-macOS" artifact (zip of the .app). Share with Mac users.
+
+name: Build macOS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create placeholder .env
+        run: echo 'ELEVENLABS_API_KEY=' > .env
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build macOS release
+        run: flutter build macos --release
+
+      - name: Zip macOS app
+        run: |
+          APP_PATH="build/macos/Build/Products/Release/ethionote.app"
+          if [ ! -d "$APP_PATH" ]; then
+            echo "App not found at $APP_PATH"
+            find build -name "*.app" -type d
+            exit 1
+          fi
+          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" EthioNote-macOS.zip
+
+      - name: Upload EthioNote-macOS.zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: EthioNote-macOS
+          path: EthioNote-macOS.zip

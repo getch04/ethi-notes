@@ -82,6 +82,11 @@ flutter build windows --release
 ```
 The app is in `build\windows\x64\runner\Release\`. Zip that folder and share it; they run the `.exe` inside.
 
+### 7. macOS desktop build
+**On your Mac:** `flutter build macos --release` → app at `build/macos/Build/Products/Release/ethionote.app`. Zip the `.app` and share it.
+
+**From CI:** Push the repo, then **Actions** → **"Build macOS"** → **Run workflow**. When it finishes, download the **EthioNote-macOS** artifact. Recipients unzip and double‑click **ethionote.app** (they may need to right‑click → Open the first time if macOS blocks it).
+
 ## Implementation Details
 - **Audio Recording**: Uses the `record` package to capture 16kHz mono WAV audio.
 - **API Requests**: Uses `dio` for multipart POST requests to the ElevenLabs `/v1/speech-to-text` endpoint.
