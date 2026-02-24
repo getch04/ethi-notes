@@ -1,0 +1,45 @@
+# Build EthioNote for Windows so you can download and share the app.
+# Run manually: Actions tab → "Build Windows" → "Run workflow"
+# After it finishes, download the "EthioNote-Windows" artifact (a zip). Share that zip with Windows users.
+
+name: Build Windows
+
+on:
+  workflow_dispatch:  # Run manually from GitHub Actions tab
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build Windows release
+        run: flutter build windows --release
+
+      - name: Zip Windows build
+        run: |
+          # Flutter 3.16+ outputs to build\windows\x64\runner\Release\
+          $releaseDir = "build\windows\x64\runner\Release"
+          if (!(Test-Path $releaseDir)) {
+            $releaseDir = "build\windows\x64\runner"
+          }
+          if (!(Test-Path $releaseDir)) {
+            Get-ChildItem -Path build -Recurse -Directory | Select-Object FullName
+            exit 1
+          }
+          Compress-Archive -Path "$releaseDir\*" -DestinationPath "EthioNote-Windows.zip" -Force
+
+      - name: Upload EthioNote-Windows.zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: EthioNote-Windows
+          path: EthioNote-Windows.zip
