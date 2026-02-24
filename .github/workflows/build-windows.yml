@@ -15,6 +15,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # .env is in .gitignore but listed in pubspec assets; create empty file so build succeeds.
+      # Users add their own ELEVENLABS_API_KEY (e.g. in a .env next to the exe or via env).
+      - name: Create placeholder .env
+        run: echo ELEVENLABS_API_KEY= > .env
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
