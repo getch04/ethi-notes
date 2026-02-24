@@ -6,6 +6,8 @@ name: Build Windows
 
 on:
   workflow_dispatch:  # Run manually from GitHub Actions tab
+  push:
+    branches: [main]
 
 jobs:
   build:
